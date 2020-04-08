@@ -65,10 +65,10 @@ def get_compose_options(
     """
     plugin_manager = setup_plugin_manager()
     registry = Registry()
+    plugin_options = plugin_manager.hook.local_compose_options(project=project)
     if project:
         to_add = [
-            (opts["name"], opts["options"], opts["priority"])
-            for opts in plugin_manager.hook.local_compose_options(project=project)
+            (opts["name"], opts["options"], opts["priority"]) for opts in plugin_options
         ]
         registry.add_list(to_add)
     else:

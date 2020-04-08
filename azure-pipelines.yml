@@ -6,10 +6,26 @@ schedules:
       - master
   always: true
 
-stages:
-  - template: azure-pipelines/build.yml
-  - template: azure-pipelines/test.yml
-  - template: azure-pipelines/push.yml
+jobs:
+  - job: debug
+    timeoutInMinutes: 180
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps:
+      - script: |
+          df -h
+          time sudo rm -rf /usr/share/dotnet
+          df -h
+          time sudo rm -rf /opt/ghc
+          df -h
+          time sudo rm -rf /usr/local/lib/android
+          df -h
+          time sudo rm -rf /var/cache/apt/archives
+          df -h
+          sudo du / -x -h > /tmp/sizes
+          sort -h /tmp/sizes|tail -n100
+        displayName: 'Debug disk space issue'
+
 
 variables:
   - name: DOCKER_BUILDKIT
