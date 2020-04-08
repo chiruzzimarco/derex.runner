@@ -90,6 +90,15 @@ steps:
     displayName: Check translations
 
   - script: |
+      # We observed a "no space left on device" on Azure pipelines when
+      # saving the docker images in the next step. So we try to free up some space here.
+      df -h
+      docker system prune -f
+      df -h
+    condition: and(succeeded(), ne(variables.needs_build, 'false'))
+    displayName: Free up space
+
+  - script: |
       set -euxo pipefail;
       docker save \
         $(derex build openedx --only-print-image-name -t nostatic $(DOCKER_IMAGES_SLUG)) \
